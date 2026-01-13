@@ -8,6 +8,7 @@ SetCapsLockState "AlwaysOff"
 global IsNavMode := false
 global IsShiftSticky := false
 global HasMoved := false 
+global IsHookActive := false 
 
 UpdateStatus() {
     if (IsNavMode) {
@@ -19,19 +20,17 @@ UpdateStatus() {
     }
 }
 
-; 【核心修复】退出导航模式
+; 【核心清理】退出导航模式
 ExitNav(shouldCollapse := true) {
     global IsNavMode := false
     global IsShiftSticky := false
+    global IsHookActive := false
     
-    Send("{Shift Up}") 
+    Send("{Shift Up}{Ctrl Up}") ; 确保状态彻底重置
     Sleep(20)
     
-    ; 修复点：只有在真正动过、且需要坍缩选区时才按键
     if (shouldCollapse && HasMoved) {
-        ; 为了防止 h 选中整行后跳到下一行，我们采用“左移再右移”或者简单的“左移”
-        ; 这里建议用 {Left}，它会停留在选中区域的开头，最稳且不跳行
-        Send("{Left}") 
+        Send("{Left}") ; 采用左移坍缩，防止跳行
     }
     
     global HasMoved := false
@@ -46,10 +45,9 @@ CapsLock::
     global IsNavMode := !IsNavMode
     if (IsNavMode) {
         global IsShiftSticky := true 
-        global HasMoved := false ; 进场重置
+        global HasMoved := false 
         UpdateStatus()
     } else {
-        ; 修复点：如果进场后没动过，退出时不坍缩选区，防止光标平移
         ExitNav(HasMoved ? true : false) 
     }
 }
@@ -77,7 +75,10 @@ CapsLock & o::Send("{Blind}{End}")
 ; ==========================================================
 #HotIf IsNavMode
 
-; --- 选中整行 ---
+; --- 独立按键逻辑 (只有在非 Hook 状态下触发) ---
+#HotIf IsNavMode and !IsHookActive
+
+; 1. 选中整行
 h:: {
     global HasMoved := true 
     Send("{Shift Up}")
@@ -86,15 +87,33 @@ h:: {
     Send("+{End}") 
 }
 
+; 2. 【新增】不断向后选中单词
+w:: {
+    global HasMoved := true
+    ; 根据当前是否是 Visual 模式决定是否带 Shift
+    Send(IsShiftSticky ? "^+{Right}" : "^{Right}")
+}
+
+; 3. 【新增】不断向前选中单词
+b:: {
+    global HasMoved := true
+    Send(IsShiftSticky ? "^+{Left}" : "^{Left}")
+}
+
+#HotIf IsNavMode
 ; --- 核心 1：多态 d 键 ---
 d:: {
     if (HasMoved) {
         Send("{Del}")
-        ExitNav(false) ; 删除后不需要坍缩动作
+        ExitNav(false)
         return
     }
+    
+    global IsHookActive := true 
     ih := InputHook("L1 T0.5", "{Esc}{CapsLock}")
     ih.Start(), ih.Wait()
+    global IsHookActive := false 
+    
     if (ih.Input == "h") {
         Send("{Shift Up}{Home 2}")
         Sleep(20)
@@ -109,15 +128,19 @@ d:: {
     }
 }
 
-; --- 核心 2：多态 c 键 (Copy 系列) ---
+; --- 核心 2：多态 c 键 ---
 c:: {
     if (HasMoved) {
         Send("^c")
-        ExitNav(true) ; 复制完需要坍缩
+        ExitNav(true)
         return
     }
+    
+    global IsHookActive := true
     ih := InputHook("L1 T0.5", "{Esc}{CapsLock}")
     ih.Start(), ih.Wait()
+    global IsHookActive := false
+    
     if (ih.Input == "h") {
         Send("{Shift Up}{Home 2}")
         Sleep(20)
