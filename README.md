@@ -113,6 +113,7 @@
 
 ---
 
-## 📄 许可证
+## 📄 许可证 (License)
 
-[MIT License](LICENSE)
+本项目基于 **GNU GPLv3** 协议开源。
+[GNU General Public License v3.0](LICENSE)
