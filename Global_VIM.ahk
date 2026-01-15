@@ -349,11 +349,42 @@ CapsLock & l::Send("{Blind}{Right}")
 CapsLock & u::Send("{Blind}{Home}")
 CapsLock & o::Send("{Blind}{End}")
 CapsLock & n::Send("{End}{Enter}")
+; ==========================================================
+; 8. 全局辅助快捷键 (已修复状态同步，逻辑保持不变)
+; ==========================================================
 
 ^Enter::Send("{End}{Enter}")
-^i::Send(IsNavMode && IsShiftSticky ? "+{Up 5}" : "{Up 5}")
-^k::Send(IsNavMode && IsShiftSticky ? "+{Down 5}" : "{Down 5}")
-^j::Send(IsNavMode && IsShiftSticky ? "^+{Left}" : "^{Left}")
-^l::Send(IsNavMode && IsShiftSticky ? "^+{Right}" : "^{Right}")
 
-+CapsLock::CapsLock
+^i:: {
+    if (IsNavMode) {
+        global HasMoved := true ; 关键修复：让 d/c/x 知道这里发生了移动
+    }
+    ; 保持你的原逻辑：移动 5 次
+    Send(IsNavMode && IsShiftSticky ? "+{Up 5}" : "{Up 5}")
+}
+
+^k:: {
+    if (IsNavMode) {
+        global HasMoved := true ; 关键修复
+    }
+    ; 保持你的原逻辑：移动 5 次
+    Send(IsNavMode && IsShiftSticky ? "+{Down 5}" : "{Down 5}")
+}
+
+^j:: {
+    if (IsNavMode) {
+        global HasMoved := true ; 关键修复
+        UpdateStatus()
+    }
+    Send(IsNavMode && IsShiftSticky ? "^+{Left}" : "^{Left}")
+}
+
+^l:: {
+    if (IsNavMode) {
+        global HasMoved := true ; 关键修复
+        UpdateStatus()
+    }
+    Send(IsNavMode && IsShiftSticky ? "^+{Right}" : "^{Right}")
+}
+
+^CapsLock::CapsLock
