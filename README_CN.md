@@ -1,6 +1,8 @@
 <div align="center">
 
-# Tanto 🗡️
+<img src="icon/sword.png" width="120" height="120" alt="Tanto Logo" />
+
+# Tanto (短刀)
 
 [English](README.md) | [简体中文](README_CN.md)
 
@@ -103,6 +105,19 @@
 2.  确保安装 [AutoHotkey v2.0+](https://www.autohotkey.com/)。
 3.  直接运行 `tanto.ahk` 进行调试。
 4.  **图标资源**：位于 `icon/assets/` 目录，编译脚本会自动引用。
+
+### 图标与开发环境
+
+使用 Conda 快速配置本地图标转换环境：
+
+```bash
+cd icon
+conda env create -f environment.yml
+conda activate tanto-env
+python3 convert.py
+```
+
+上述命令会创建 `tanto-env` 环境（含 Pillow），并运行转换脚本重新生成 ICO 资源。
 
 ---
 

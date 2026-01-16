@@ -1,0 +1,19 @@
+name: tanto-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # 1. 基础环境
+  - python=3.10
+  - pip
+
+  # 2. 核心 C 语言依赖 (最难搞的部分，必须用 Conda 装)
+  # 即使你现在只用 PNG，留着它也不会有副作用，
+  # 万一哪天你要处理 SVG，它能救命。
+  - pycairo
+
+  # 3. Python 库 (通过 Pip 安装)
+  - pip:
+    - pillow      # 核心：现在的 PNG 转换全靠它
+    - svglib      # 备用：处理 SVG 需要
+    - reportlab   # 备用：处理 SVG 需要
