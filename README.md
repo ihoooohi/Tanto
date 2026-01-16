@@ -1,6 +1,8 @@
 <div align="center">
 
-# Tanto 🗡️
+<img src="icon/sword.png" width="120" height="120" alt="Tanto Logo" />
+
+# Tanto
 
 [English](README.md) | [简体中文](README_CN.md)
 
@@ -103,6 +105,19 @@ If you want to modify the source code or compile it yourself:
 2.  Ensure [AutoHotkey v2.0+](https://www.autohotkey.com/) is installed.
 3.  Run `tanto.ahk` directly for debugging.
 4.  **Icons**: Located in the `icon/assets/` directory. The compilation script references them automatically.
+
+### Icons & Dev Environment
+
+Use Conda to set up the local icon toolchain quickly:
+
+```bash
+cd icon
+conda env create -f environment.yml
+conda activate tanto-env
+python3 convert.py
+```
+
+This creates the `tanto-env` environment with Pillow and runs the converter to regenerate ICO assets.
 
 ---
 
