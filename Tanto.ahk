@@ -368,7 +368,7 @@ CapsLock & n::Send("{End}{Enter}")
 
 ^Enter::Send("{End}{Enter}")
 
-^i:: {
+!i:: {
     if (IsNavMode) {
         global HasMoved := true ; 关键修复：让 d/c/x 知道这里发生了移动
     }
@@ -376,7 +376,7 @@ CapsLock & n::Send("{End}{Enter}")
     Send(IsNavMode && IsShiftSticky ? "+{Up 5}" : "{Up 5}")
 }
 
-^k:: {
+!k:: {
     if (IsNavMode) {
         global HasMoved := true ; 关键修复
     }
@@ -384,7 +384,7 @@ CapsLock & n::Send("{End}{Enter}")
     Send(IsNavMode && IsShiftSticky ? "+{Down 5}" : "{Down 5}")
 }
 
-^j:: {
+!j:: {
     if (IsNavMode) {
         global HasMoved := true ; 关键修复
         UpdateStatus()
@@ -392,7 +392,7 @@ CapsLock & n::Send("{End}{Enter}")
     Send(IsNavMode && IsShiftSticky ? "^+{Left}" : "^{Left}")
 }
 
-^l:: {
+!l:: {
     if (IsNavMode) {
         global HasMoved := true ; 关键修复
         UpdateStatus()
