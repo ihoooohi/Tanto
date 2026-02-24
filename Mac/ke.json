@@ -1,0 +1,555 @@
+{
+    "description": "Vim Mode for Weihao - Hold for Nav, Tap for Visual",
+    "manipulators": [
+        {
+            "conditions": [
+                {
+                    "name": "vim_sticky",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "description": "1. [Exit] 退出锁定模式：仅在移动过的情况下发右键取消选中",
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to_if_alone": [
+                {
+                    "conditions": [
+                        {
+                            "name": "has_moved",
+                            "type": "variable_if",
+                            "value": 1
+                        }
+                    ],
+                    "key_code": "right_arrow"
+                },
+                { "shell_command": "osascript -e 'display notification \"🏁 Mode Off\" with title \"Vim Mode\"'" },
+                {
+                    "set_variable": {
+                        "name": "vim_sticky",
+                        "value": 0
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "vim_mode",
+                        "value": 0
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "visual_mode",
+                        "value": 0
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 0
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_sticky",
+                    "type": "variable_if",
+                    "value": 0
+                }
+            ],
+            "description": "2. [Enter] 长按=普通模式(不带Shift)，单击=锁定选中(带Shift)",
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "set_variable": {
+                        "name": "vim_mode",
+                        "value": 1
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "visual_mode",
+                        "value": 0
+                    }
+                }
+            ],
+            "to_after_key_up": [
+                {
+                    "conditions": [
+                        {
+                            "name": "vim_sticky",
+                            "type": "variable_if",
+                            "value": 0
+                        }
+                    ],
+                    "set_variable": {
+                        "name": "vim_mode",
+                        "value": 0
+                    }
+                }
+            ],
+            "to_if_alone": [
+                {
+                    "set_variable": {
+                        "name": "vim_sticky",
+                        "value": 1
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "visual_mode",
+                        "value": 1
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 0
+                    }
+                },
+                { "shell_command": "osascript -e 'display notification \"👁️ Visual Mode Locked\" with title \"Vim Mode\"'" }
+            ],
+            "type": "basic"
+        },
+        {
+            "description": "========== Navigation Logic (Split by visual_mode) ==========",
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "i" },
+            "to": [
+                {
+                    "key_code": "up_arrow",
+                    "modifiers": ["left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "i" },
+            "to": [{ "key_code": "up_arrow" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "k" },
+            "to": [
+                {
+                    "key_code": "down_arrow",
+                    "modifiers": ["left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "k" },
+            "to": [{ "key_code": "down_arrow" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "j" },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "j" },
+            "to": [{ "key_code": "left_arrow" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "l" },
+            "to": [
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "l" },
+            "to": [{ "key_code": "right_arrow" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "w" },
+            "to": [
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_option", "left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "w" },
+            "to": [
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "b" },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_option", "left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "b" },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "u" },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "u" },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                },
+                {
+                    "name": "visual_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "o" },
+            "to": [
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "o" },
+            "to": [
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "vim_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "h" },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command"]
+                },
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                },
+                {
+                    "set_variable": {
+                        "name": "has_moved",
+                        "value": 1
+                    }
+                },
+                {
+                    "set_variable": {
+                        "name": "visual_mode",
+                        "value": 1
+                    }
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "description": "========== Command Shortcuts (Paragraph Jump) ==========",
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "i",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "up_arrow",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "k",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "down_arrow",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "j",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "l",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        }
+    ]
+}
